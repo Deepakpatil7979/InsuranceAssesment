@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+    <link rel="stylesheet" href="/public/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Upload XLSX/CSV File</h1>
+        <form id="uploadForm" action="/api/upload" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="file">Choose file:</label>
+                <input type="file" id="file" name="file" accept=".xlsx,.csv" required>
+            </div>
+            <button type="submit">Upload</button>
+        </form>
+        <div id="response"></div>
+    </div>
+
+    <script>
+        const uploadForm = document.getElementById('uploadForm');
+        const responseDiv = document.getElementById('response');
+
+        uploadForm.addEventListener('submit', async (event) => { event.preventDefault();
+
+            const formData = new FormData(uploadForm);
+            try {
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    responseDiv.innerHTML = `<p>File uploaded successfully!</p>`;
+                } else {
+                    const error = await response.json();
+                    responseDiv.innerHTML = `<p>Error: ${error.message}</p>`;
+                }
+            } catch (err) {
+                responseDiv.innerHTML = `<p>Error: ${err.message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>
